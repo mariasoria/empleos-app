@@ -1,11 +1,15 @@
 package es.mariasoria.controller;
 
+import es.mariasoria.model.Usuario;
 import es.mariasoria.model.Vacante;
 import es.mariasoria.service.VacantesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.jws.WebParam;
 import java.text.ParseException;
@@ -19,6 +23,18 @@ public class HomeController {
 
     @Autowired
     private VacantesService serviceVacantes;
+
+
+    @GetMapping("/signup")
+    public String registrarse(Usuario usuario) {
+        return "formRegistro";
+    }
+
+    @PostMapping("/signup")
+    public String guardarRegistro(Usuario usuario, RedirectAttributes attributes) {
+        // Ejercicio.
+        return "redirect:/usuarios/index";
+    }
 
     @GetMapping ("/tabla")
     public String mostrarTabla (Model model){
@@ -55,12 +71,15 @@ public class HomeController {
 
     @GetMapping("/")
     public String mostrarHome(Model model) {
-        List <Vacante> listaVacantes = serviceVacantes.buscarTodas();
-        model.addAttribute("vacantes", listaVacantes);
-
+        //List <Vacante> listaVacantes = serviceVacantes.buscarTodas();
+        //model.addAttribute("vacantes", listaVacantes);
         return "home";
     }
 
+    @ModelAttribute
+    public void setGenericos(Model model){
+        model.addAttribute("vacantes", serviceVacantes.buscarDestacadas());
+    }
 
 
 

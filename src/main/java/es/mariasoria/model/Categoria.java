@@ -1,7 +1,13 @@
 package es.mariasoria.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="Categorias")
 public class Categoria {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nombre;
 	private String descripcion;

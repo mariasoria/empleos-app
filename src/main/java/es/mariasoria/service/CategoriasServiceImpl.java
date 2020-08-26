@@ -80,4 +80,8 @@ public class CategoriasServiceImpl implements CategoriasService {
         }
         return null;
     }
+
+    @Override
+    public void eliminar(Integer idCategoria) {
+    }
 }

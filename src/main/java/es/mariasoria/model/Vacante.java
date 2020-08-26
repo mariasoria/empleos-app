@@ -1,5 +1,6 @@
 package es.mariasoria.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /****
@@ -7,8 +8,12 @@ import java.util.Date;
  * representa la información publicada sobre una oferta de trabajo
  */
 
+@Entity
+@Table(name="Vacantes")
 public class Vacante {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; // identifica la vacante (en nuestra BD)
     private String nombre; // especifica el titulo de la vacante
     private String descripcion; // descripción de la vacante
@@ -19,6 +24,12 @@ public class Vacante {
     private String estatus;
     private String detalles;
 
+    //@Transient
+    // Creamos una relacion one to one entre vacantes y categorias
+    // especificamos la columna con la que se marca la relacion entre ambas columnas
+    // que sera el nombre de la clave foranea (chequear el pdf tema 8, pag 5)
+    @OneToOne
+    @JoinColumn(name="idCategoria")
     private Categoria categoria;
 
     public Integer getId() {

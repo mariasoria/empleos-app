@@ -5,6 +5,7 @@ import es.mariasoria.service.CategoriasService;
 import es.mariasoria.service.VacantesService;
 import es.mariasoria.util.Utileria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -40,14 +41,13 @@ public class VacantesController {
         //TODO 2. Agregar al model el listado de vacantes
         model.addAttribute("vacantes", vacantes);
         //TODO 3. Renderizar las vacantes en la vista (integrar el archivo template de los archivos descargados: empleos/listVacantes.html)
-        System.out.println(vacantes);
+        //System.out.println(vacantes);
         //TODO 4. Agregar al menu una opcion llamada "vacantes" configurando la URL "vacantes/index"
         return "vacantes/listVacantes";
     }
 
     @GetMapping("/create")
     public String crear(Vacante vacante, Model model) {
-        model.addAttribute("categorias", serviceCategorias.buscarTodas());
         return "vacantes/formVacante";
     }
 
@@ -78,12 +78,19 @@ public class VacantesController {
     }
 
     // para recibir la info de un formulario uso @RequestParam("")
-    @GetMapping ("/delete")
-    public String eliminar (@RequestParam("id") int idVacante, Model model){
-
+    @GetMapping ("/delete/{id}")
+    public String eliminar (@PathVariable("id") int idVacante, RedirectAttributes attributes){
         System.out.println("Borrando vacante con id: " + idVacante);
-        model.addAttribute("id", idVacante);
-        return "mensaje";
+        serviceVacantes.eliminar(idVacante);
+        attributes.addFlashAttribute("msg", "La vacante fue eliminada correctamente");
+        return "redirect:/vacantes/index";
+    }
+
+    @GetMapping ("/edit/{id}")
+    public String editar(@PathVariable ("id") int idVacante, Model model){
+        Vacante vacante = serviceVacantes.buscarPorId(idVacante);
+        model.addAttribute("vacante", vacante);
+        return "vacantes/formVacante";
     }
 
     @GetMapping ("/view/{id}")
@@ -104,18 +111,10 @@ public class VacantesController {
         webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
-    /*@PostMapping("/save")
-    public String guardar(@RequestParam("nombre") String nombre, @RequestParam("descripcion") String descripcion,
-                          @RequestParam("estatus") String estatus, @RequestParam("fecha") String fecha,
-                          @RequestParam("destacado") int destacado, @RequestParam("salario") double salario,
-                          @RequestParam("detalles") String detalles){
-        System.out.println("Nombre: " + nombre);
-        System.out.println("descripcion: " + descripcion);
-        System.out.println("estatus: " + estatus);
-        System.out.println("fecha: " + fecha);
-        System.out.println("destacado: " + destacado);
-        System.out.println("salario: " + salario);
-        System.out.println("detalles: " + detalles);
-        return "vacantes/listVacantes";
-    }*/
+
+    @ModelAttribute // Permite añadir al model atributos comunes para todos los métodos que los necesiten de este controlador
+    public void setGenericos (Model model){
+        model.addAttribute("categorias", serviceCategorias.buscarTodas());
+    }
+
 }

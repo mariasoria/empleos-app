@@ -17,13 +17,13 @@ import java.util.List;
 public class CategoriasController {
 
     @Autowired
-    private CategoriasService catService;
+    private CategoriasService serviceCategorias;
 
     //@GetMapping("/index")
     @RequestMapping(value="/index", method= RequestMethod.GET)
     public String mostrarIndex(Model model) {
         // Renderizar el listado de Categorias (listCategorias.html)
-        List<Categoria> lista = catService.buscarTodas();
+        List<Categoria> lista = serviceCategorias.buscarTodas();
         model.addAttribute("listaCategorias", lista);
         // Configurar la URL del botón para crear una Categoría
         return "categorias/listCategorias";
@@ -45,12 +45,26 @@ public class CategoriasController {
             return "categorias/formCategoria";
         }
         //Guardar el objeto Categoria a traves de la clase de servicio
-        catService.guardar(nuevaCategoria);
+        serviceCategorias.guardar(nuevaCategoria);
         //Mostrar al usuario mensaje de confirmacion de registro guardado
         attributes.addFlashAttribute("message", "La categoría se ha guardado con éxito");
         return "redirect:/categorias/index";
     }
 
+    @GetMapping("/edit/{id}")
+    public String editar(@PathVariable ("id") int idCategoria, Model model){
+        Categoria categoria = serviceCategorias.buscarPorId(idCategoria);
+        model.addAttribute("categoria", categoria);
+        return "categorias/formCategoria";
+    }
 
+
+    @GetMapping("/delete/{id}")
+    public String eliminar(@PathVariable ("id") int idCategoria, RedirectAttributes attributes){
+        System.out.println("Borrando registro numero: " + idCategoria);
+        serviceCategorias.eliminar(idCategoria);
+        attributes.addFlashAttribute("message", "La categoria fue eliminada correctamente");
+        return "redirect:/categorias/index";
+    }
 
 }
