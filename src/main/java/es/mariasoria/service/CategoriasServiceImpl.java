@@ -1,6 +1,8 @@
 package es.mariasoria.service;
 
 import es.mariasoria.model.Categoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -83,5 +85,10 @@ public class CategoriasServiceImpl implements CategoriasService {
 
     @Override
     public void eliminar(Integer idCategoria) {
+    }
+
+    @Override
+    public Page<Categoria> buscarTodas(Pageable page) {
+        return null;
     }
 }

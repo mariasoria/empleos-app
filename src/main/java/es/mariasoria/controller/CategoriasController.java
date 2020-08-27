@@ -1,6 +1,9 @@
 package es.mariasoria.controller;
 
+import es.mariasoria.model.Vacante;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,10 +27,18 @@ public class CategoriasController {
     public String mostrarIndex(Model model) {
         // Renderizar el listado de Categorias (listCategorias.html)
         List<Categoria> lista = serviceCategorias.buscarTodas();
-        model.addAttribute("listaCategorias", lista);
+        model.addAttribute("categorias", lista);
         // Configurar la URL del botón para crear una Categoría
         return "categorias/listCategorias";
     }
+
+    @GetMapping("/indexPaginate")
+    public String mostrarIndexPaginado(Model model, Pageable page) {
+        Page<Categoria> lista = serviceCategorias.buscarTodas(page);
+        model.addAttribute("categorias", lista);
+        return "categorias/listCategorias";
+    }
+
 
     //@GetMapping("/create")
     @RequestMapping(value="/create", method=RequestMethod.GET)
