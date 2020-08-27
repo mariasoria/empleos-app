@@ -3,12 +3,18 @@ package es.mariasoria.controller;
 import es.mariasoria.model.Perfil;
 import es.mariasoria.model.Usuario;
 import es.mariasoria.model.Vacante;
+import es.mariasoria.service.CategoriasService;
 import es.mariasoria.service.UsuariosService;
 import es.mariasoria.service.VacantesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,6 +32,16 @@ public class HomeController {
     @Autowired
     private UsuariosService usuariosService;
 
+    @Autowired
+    private CategoriasService categoriasService;
+
+    @GetMapping("/")
+    public String mostrarHome(Model model) {
+        //List <Vacante> listaVacantes = serviceVacantes.buscarTodas();
+        //model.addAttribute("vacantes", listaVacantes);
+        // estan comentados xq el metodo setGenericos ya carga las vacantes en el modelo
+        return "home";
+    }
 
     @GetMapping("/signup")
     public String registrarse(Usuario usuario) {
@@ -48,6 +64,32 @@ public class HomeController {
         System.out.println("usuario creado: " + usuario);
         attributes.addFlashAttribute("msg", "El usuario fue creado correctamente");
         return "redirect:/usuarios/index";
+    }
+
+    @GetMapping("/search")
+    public String buscar(@ModelAttribute("search") Vacante vacante, Model model){
+        System.out.println("Buscando por: " + vacante);
+
+        ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("descripcion", ExampleMatcher.GenericPropertyMatchers.contains());
+
+        //reseteamos la imagen a null
+        vacante.reset();
+
+        // creamos un Example y buscamos en BD con él, guarda en "lista"
+        Example<Vacante> example = Example.of(vacante, matcher);
+        List<Vacante> lista = vacantesService.buscarByExample(example);
+
+
+        model.addAttribute("vacantes", lista);
+        return "home";
+    }
+
+    /*
+    * InitBinder: para Strings. Si los detecta vacios en el Data Binding los settea a NULL
+    */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @GetMapping ("/tabla")
@@ -80,17 +122,14 @@ public class HomeController {
         return "listado";
     }
 
-    @GetMapping("/")
-    public String mostrarHome(Model model) {
-        //List <Vacante> listaVacantes = serviceVacantes.buscarTodas();
-        //model.addAttribute("vacantes", listaVacantes);
-        // estan comentados xq el metodo setGenericos ya carga las vacantes en el modelo
-        return "home";
-    }
+
 
     @ModelAttribute
     public void setGenericos(Model model){
+        Vacante vacanteSearch = new Vacante();
+        model.addAttribute("categorias", categoriasService.buscarTodas());
         model.addAttribute("vacantes", vacantesService.buscarDestacadas());
+        model.addAttribute("search", vacanteSearch);
     }
 
 

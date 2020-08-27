@@ -1,6 +1,7 @@
 package es.mariasoria.service;
 
 import es.mariasoria.model.Vacante;
+import org.springframework.data.domain.Example;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface VacantesService {
 
     // elimina una vacante
     void eliminar(Integer idVacante);
+
+    List<Vacante> buscarByExample(Example<Vacante> example);
 }
 

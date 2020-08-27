@@ -5,6 +5,7 @@ import es.mariasoria.repository.VacantesRepository;
 import es.mariasoria.service.VacantesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,4 +46,11 @@ public class VacantesServiceJpa implements VacantesService {
     public void eliminar(Integer idVacante) {
         vacantesRepo.deleteById(idVacante);
     }
+
+    @Override
+    public List<Vacante> buscarByExample(Example<Vacante> example) {
+        return vacantesRepo.findAll(example);
+    }
+
+
 }
