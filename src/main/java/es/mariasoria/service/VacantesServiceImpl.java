@@ -2,6 +2,8 @@ package es.mariasoria.service;
 
 import es.mariasoria.model.Vacante;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -115,6 +117,11 @@ public class VacantesServiceImpl implements VacantesService {
 
     @Override
     public List<Vacante> buscarByExample(Example<Vacante> example) {
+        return null;
+    }
+
+    @Override
+    public Page<Vacante> buscarTodas(Pageable page) {
         return null;
     }
 
